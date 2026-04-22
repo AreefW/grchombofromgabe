@@ -1,0 +1,5 @@
+Examples/ScalarfieldBH/
+Examples/KerrBH
+Examples/BinaryBH
+Examples/ScalarFieldCosmo/slurm*
+Examples/ScalarFieldCosmo/hdf5/
