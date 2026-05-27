@@ -103,9 +103,7 @@ void CosmoLevel::initialData()
 void CosmoLevel::postRestart()
 {
     // only want to do this on the first restart and also every restart
-    if (m_time == 0.0)
-    {
-        fillAllGhosts();
+            fillAllGhosts();
         Potential potential(m_p.potential_params);
         ScalarFieldWithPotential scalar_field(potential);
 
@@ -143,6 +141,46 @@ void CosmoLevel::postRestart()
         pout() << "Calculated K mean as " << m_cosmo_amr.get_K_mean()
                << " at t = " << m_time << " on restart at level " << m_level
                << endl;
+    if (m_time == 0.0)
+    {
+        // fillAllGhosts();
+        // Potential potential(m_p.potential_params);
+        // ScalarFieldWithPotential scalar_field(potential);
+
+        // // Calculate constraints and some diagnostics as we need it in tagging
+        // // criterion
+        // BoxLoops::loop(MatterConstraints<ScalarFieldWithPotential>(
+        //                    scalar_field, m_dx, m_p.G_Newton, c_Ham,
+        //                    Interval(c_Mom, c_Mom), c_Ham_abs_sum,
+        //                    Interval(c_Mom_abs_sum, c_Mom_abs_sum)),
+        //                m_state_new, m_state_diagnostics, EXCLUDE_GHOST_CELLS);
+        // CosmoDiagnostics<ScalarFieldWithPotential> cosmo_diagnostics(
+        //     scalar_field, m_dx, m_p.G_Newton);
+        // BoxLoops::loop(cosmo_diagnostics, m_state_new, m_state_diagnostics,
+        //                EXCLUDE_GHOST_CELLS);
+
+        // pout() << "Setting K mean on restart at t = " << m_time << " on level "
+        //        << m_level << endl;
+
+        // // AMRReductions for diagnostic variables
+        // AMRReductions<VariableType::diagnostic> amr_reductions_diagnostic(
+        //     m_cosmo_amr);
+        // double phys_vol = amr_reductions_diagnostic.sum(c_sqrt_gamma);
+        // double K_total = amr_reductions_diagnostic.sum(c_K_scaled);
+
+        // // Set rho_mean
+        // m_cosmo_amr.set_rho_mean(amr_reductions_diagnostic.sum(c_rho_scaled) /
+        //                          phys_vol);
+        // pout() << "Set rho_mean = " << m_cosmo_amr.get_rho_mean()
+        //        << " at t = " << m_time << " on initial data at level "
+        //        << m_level << endl;
+        // m_cosmo_amr.set_S_mean(amr_reductions_diagnostic.sum(c_S_scaled) /
+        //                        phys_vol);
+        // // Set K_mean
+        // m_cosmo_amr.set_K_mean(K_total / phys_vol);
+        // pout() << "Calculated K mean as " << m_cosmo_amr.get_K_mean()
+        //        << " at t = " << m_time << " on restart at level " << m_level
+        //        << endl;
 
         // Use AMR Interpolator and do lineout data extraction
         // pass the boundary params so that we can use symmetries

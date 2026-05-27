@@ -71,7 +71,8 @@ class CCZ4RHS
 
   protected:
     const params_t m_params; //!< CCZ4 parameters
-    const gauge_t m_gauge;   //!< Class to compute gauge in rhs_equation
+    // const gauge_t m_gauge;   //!< Class to compute gauge in rhs_equation
+    mutable gauge_t m_gauge;   //!< Class to compute gauge in rhs_equation
     const double m_sigma;    //!< Coefficient for Kreiss-Oliger dissipation
     int m_formulation;
     double m_cosmological_constant;

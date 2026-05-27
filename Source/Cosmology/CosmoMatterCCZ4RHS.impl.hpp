@@ -42,7 +42,8 @@ void CosmoMatterCCZ4RHS<matter_t, deriv_t>::compute(
 
     // Ensure the internally used gauge has the up-to-date cosmological K_mean
     // before any gauge RHS terms are evaluated.
-    const_cast<gauge_t &>(this->m_gauge).set_K_mean(m_K_mean);
+    // const_cast<gauge_t &>(this->m_gauge).set_K_mean(m_K_mean);
+    this->m_gauge.set_K_mean(m_K_mean);
 
     // Call CCZ4 RHS - work out RHS without matter, no dissipation
     Vars<data_t> matter_rhs;
