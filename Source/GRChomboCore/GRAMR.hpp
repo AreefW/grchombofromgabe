@@ -44,6 +44,12 @@ class GRAMR : public AMR
   public:
     AMRInterpolator<Lagrange<4>> *m_interpolator; //!< The interpolator pointer
 
+    double m_K_mean ;
+    double m_rho_mean ;
+    double m_rho_max;
+    double m_phys_vol;
+    double m_S_mean ;
+
     GRAMR();
 
     // defined here due to auto return type

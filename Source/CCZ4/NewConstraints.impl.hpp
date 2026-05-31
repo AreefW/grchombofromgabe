@@ -98,6 +98,13 @@ Constraints::Vars<data_t> Constraints::constraint_equations(
             out.Mom_abs_terms[i] += abs(covd_A_term[i]) + abs(d1_chi_term[i]);
         }
     }
+
+    out.sqrt_gamma = pow(vars.chi, -3. / 2.);
+    out.K_scaled = vars.K / pow(vars.chi, 3. / 2.);
+
+    auto A_UU = TensorAlgebra::raise_all(vars.A, h_UU);
+    out.A2 = TensorAlgebra::compute_trace(vars.A, A_UU);
+
     return out;
 }
 
@@ -142,6 +149,16 @@ void Constraints::store_vars(Vars<data_t> &out,
         data_t Mom_abs_terms = sqrt(Mom_abs_terms_sq);
         current_cell.store_vars(Mom_abs_terms, m_c_Moms_abs_terms.begin());
     }
+
+    current_cell.store_vars(out.sqrt_gamma, c_sqrt_gamma);
+    // current_cell.store_vars(out.rho, c_rho_phi);
+    current_cell.store_vars(out.rho, c_rho);
+    current_cell.store_vars(out.rho_scaled, c_rho_scaled);
+    current_cell.store_vars(out.S_scaled, c_S_scaled);
+    current_cell.store_vars(out.K_scaled, c_K_scaled);
+    // current_cell.store_vars(out.A2, c_A2);
+    // current_cell.store_vars(out.rho_contrast, c_rho_contrast);
+
 }
 
 #endif /* NEWCONSTRAINTS_IMPL_HPP_ */

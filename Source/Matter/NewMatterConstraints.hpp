@@ -51,7 +51,7 @@ template <class matter_t> class MatterConstraints : public Constraints
         hardcoded ones.
     */
     MatterConstraints(const matter_t a_matter, double dx, double G_Newton,
-                      int a_c_Ham, const Interval &a_c_Moms,
+                      double rho_average, int a_c_Ham, const Interval &a_c_Moms,
                       int a_c_Ham_abs_terms = -1,
                       const Interval &a_c_Moms_abs_terms = Interval());
 
@@ -62,6 +62,7 @@ template <class matter_t> class MatterConstraints : public Constraints
   protected:
     matter_t my_matter; //!< The matter object, e.g. a scalar field
     double m_G_Newton;  //!< Newton's constant, set to one by default.
+    double m_rho_average; 
 };
 
 #include "NewMatterConstraints.impl.hpp"

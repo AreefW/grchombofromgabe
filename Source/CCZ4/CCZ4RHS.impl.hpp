@@ -17,9 +17,9 @@
 template <class gauge_t, class deriv_t>
 inline CCZ4RHS<gauge_t, deriv_t>::CCZ4RHS(
     CCZ4_params_t<typename gauge_t::params_t> a_params, double a_dx,
-    double a_sigma, int a_formulation, double a_cosmological_constant)
+    double a_sigma, double a_K_mean, int a_formulation, double a_cosmological_constant)
     : m_params(a_params), m_gauge(a_params), m_sigma(a_sigma),
-      m_formulation(a_formulation),
+      m_K_mean(a_K_mean), m_formulation(a_formulation),
       m_cosmological_constant(a_cosmological_constant), m_deriv(a_dx)
 {
     // A user who wants to use BSSN should also have damping paramters = 0
@@ -223,7 +223,7 @@ void CCZ4RHS<gauge_t, deriv_t>::rhs_equation(
 
     FOR(i) { rhs.Gamma[i] = advec.Gamma[i] + Gammadot[i]; }
 
-    m_gauge.rhs_gauge(rhs, vars, d1, d2, advec);
+    m_gauge.rhs_gauge(rhs, vars, d1, d2, advec, m_K_mean);
 }
 
 #endif /* CCZ4RHS_IMPL_HPP_ */

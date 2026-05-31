@@ -36,6 +36,15 @@ class Constraints
         data_t Ham_abs_terms;
         Tensor<1, data_t> Mom;
         Tensor<1, data_t> Mom_abs_terms;
+        // Added vars
+        data_t rho;
+        data_t sqrt_gamma;
+        data_t S;
+        data_t rho_scaled;
+        data_t S_scaled;
+        data_t K_scaled;
+        data_t A2;
+        data_t rho_contrast;
     };
 
     // Constructor which allows specifying Ham and Mom vars

@@ -13,12 +13,12 @@
 
 template <class matter_t>
 MatterConstraints<matter_t>::MatterConstraints(
-    const matter_t a_matter, double dx, double G_Newton, int a_c_Ham,
-    const Interval &a_c_Moms, int a_c_Ham_abs_terms /* defaulted*/,
+    const matter_t a_matter, double dx, double G_Newton, double rho_average, 
+    int a_c_Ham, const Interval &a_c_Moms, int a_c_Ham_abs_terms /* defaulted*/,
     const Interval &a_c_Moms_abs_terms /*defaulted*/)
     : Constraints(dx, a_c_Ham, a_c_Moms, a_c_Ham_abs_terms, a_c_Moms_abs_terms,
                   0.0 /*No cosmological constant*/),
-      my_matter(a_matter), m_G_Newton(G_Newton)
+      my_matter(a_matter), m_G_Newton(G_Newton), m_rho_average(rho_average)
 {
 }
 
@@ -58,6 +58,14 @@ void MatterConstraints<matter_t>::compute(Cell<data_t> current_cell) const
                 8.0 * M_PI * m_G_Newton * abs(emtensor.Si[i]);
         }
     }
+
+    out.rho = emtensor.rho;
+    // out.deltarho = (emtensor.rho - m_rho_average) / m_rho_average;
+    out.S = emtensor.S;
+
+    out.rho_scaled = emtensor.rho / pow(vars.chi, 3. / 2.);
+    out.S_scaled = emtensor.S / pow(vars.chi, 3. / 2.);
+
     // Write the constraints into the output FArrayBox
     store_vars(out, current_cell);
 }

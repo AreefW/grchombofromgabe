@@ -71,9 +71,11 @@ class CCZ4RHS
 
   protected:
     const params_t m_params; //!< CCZ4 parameters
-    // const gauge_t m_gauge;   //!< Class to compute gauge in rhs_equation
-    mutable gauge_t m_gauge;   //!< Class to compute gauge in rhs_equation
+    const gauge_t m_gauge;   //!< Class to compute gauge in rhs_equation
+    // mutable gauge_t m_gauge;   //!< Class to compute gauge in rhs_equation
     const double m_sigma;    //!< Coefficient for Kreiss-Oliger dissipation
+    double m_K_mean;          //!< The mean curvature, used for the initial data and in the
+                              //!< gauge conditions
     int m_formulation;
     double m_cosmological_constant;
     const deriv_t m_deriv;
@@ -83,6 +85,8 @@ class CCZ4RHS
     CCZ4RHS(
         params_t a_params,            //!< The CCZ4 parameters
         double a_dx,                  //!< The grid spacing
+        double a_K_mean,              //!< The mean curvature, used for the initial data and in the
+                                      //!< gauge conditions
         double a_sigma,               //!< Kreiss-Oliger dissipation coefficient
         int a_formulation = USE_CCZ4, //!< Switches between CCZ4, BSSN,...
         double a_cosmological_constant = 0 //!< Value of the cosmological const.
