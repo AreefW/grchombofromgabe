@@ -189,7 +189,7 @@ void CosmoLevel::postRestart()
 
         // Use AMR Interpolator and do lineout data extraction
         // pass the boundary params so that we can use symmetries
-        AMRInterpolator<Lagrange<2>> interpolator(m_cosmo_amr, m_p.origin,
+        AMRInterpolator<Lagrange<2>> interpolator(m_gr_amr, m_p.origin,
                                                   m_p.dx, m_p.boundary_params,
                                                   m_p.verbosity);
 
@@ -301,9 +301,9 @@ void CosmoLevel::computeTaggingCriterion(
     FArrayBox &tagging_criterion, const FArrayBox &current_state,
     const FArrayBox &current_state_diagnostics)
 {
-    double rho_mean = m_cosmo_amr.get_rho_mean();
+    // double rho_mean = m_gr_amr.get_rho_mean();
     BoxLoops::loop(CosmoHamTaggingCriterion(m_dx, m_p.tagging_center,
-                                            m_p.tagging_radius, rho_mean),
+                                            m_p.tagging_radius, m_gr_amr.m_rho_mean),
                    current_state_diagnostics, tagging_criterion);
 }
 void CosmoLevel::specificPostTimeStep()
@@ -344,7 +344,8 @@ void CosmoLevel::specificPostTimeStep()
             m_gr_amr.m_K_mean = amr_reductions_diagnostic.sum(c_K_scaled) / phys_vol;
             m_gr_amr.m_rho_max = amr_reductions_diagnostic.max(c_rho);
             m_gr_amr.m_S_mean = amr_reductions_diagnostic.sum(c_S_scaled) / phys_vol;
-
+            
+            pout() << " At t = " << m_time << "K mean = " << m_gr_amr.m_K_mean << endl;
 
             // AMRReductions for evolution variables
             AMRReductions<VariableType::evolution> amr_reductions_evolution(
@@ -363,15 +364,15 @@ void CosmoLevel::specificPostTimeStep()
                     {"L^2_Ham", "L^2_Mom", "<chi>", "<rho>", "<K>"});
             }
             data_out_file.write_time_data_line({L2_Ham, L2_Mom, chi_mean,
-                                                m_cosmo_amr.get_rho_mean(),
-                                                m_cosmo_amr.get_K_mean()});
+                                                m_gr_amr.m_rho_mean,
+                                                m_gr_amr.m_K_mean});
 
             // Use AMR Interpolator and do lineout data extraction
             // set up an interpolator
             // pass the boundary params so that we can use symmetries if
             // applicable
             AMRInterpolator<Lagrange<4>> interpolator(
-                m_cosmo_amr, m_p.origin, m_p.dx, m_p.boundary_params,
+                m_gr_amr, m_p.origin, m_p.dx, m_p.boundary_params,
                 m_p.verbosity);
 
             // this should fill all ghosts including the boundary ones according

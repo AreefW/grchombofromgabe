@@ -28,7 +28,7 @@ class CosmoLevel : public GRAMRLevel
     // Inherit the contructors from GRAMRLevel
     using GRAMRLevel::GRAMRLevel;
 
-    CosmoAMR &m_cosmo_amr = dynamic_cast<CosmoAMR &>(m_gr_amr);
+    // GRAMR &m_gr_amr = dynamic_cast<GRAMR &>(m_gr_amr);
 
     // Typedef for scalar field
     typedef ScalarField<Potential> ScalarFieldWithPotential;
