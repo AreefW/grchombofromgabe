@@ -310,7 +310,8 @@ void CosmoLevel::specificPostTimeStep()
     // timestep, but must happen on every level (not just level zero or data
     // will not be populated on finer levels)
 
-    if (calculate_diagnostics)
+    // if (calculate_diagnostics)
+    if (min_level == 0)
     {
         fillAllGhosts();
         Potential potential(m_p.potential_params);
@@ -340,11 +341,15 @@ void CosmoLevel::specificPostTimeStep()
                                    phys_vol);
             m_cosmo_amr.set_K_mean(K_total / phys_vol);
 
+            pout() << " t = " << m_time << ", <K> = " << m_cosmo_amr.get_K_mean() << endl;
             // AMRReductions for evolution variables
             AMRReductions<VariableType::evolution> amr_reductions_evolution(
                 m_cosmo_amr);
 
-            double chi_mean = amr_reductions_evolution.sum(c_chi) / phys_vol;
+            double chi_mean = amr_reductions_evolution.sum(c_chi) / pow(m_p.L, 3.);
+            double lapse_mean = amr_reductions_evolution.sum(c_lapse) / pow(m_p.L, 3.);
+
+            pout() << " t = " << m_time << ", <lapse> = " << lapse_mean << endl;
 
             // Write output file
             SmallDataIO data_out_file(m_p.data_path + "data_out", m_dt, m_time,
@@ -354,11 +359,11 @@ void CosmoLevel::specificPostTimeStep()
             if (first_step)
             {
                 data_out_file.write_header_line(
-                    {"L^2_Ham", "L^2_Mom", "<chi>", "<rho>", "<K>"});
+                    {"L^2_Ham", "L^2_Mom", "<chi>", "<rho>", "<K>", "<lapse>"});
             }
             data_out_file.write_time_data_line({L2_Ham, L2_Mom, chi_mean,
                                                 m_cosmo_amr.get_rho_mean(),
-                                                m_cosmo_amr.get_K_mean()});
+                                                m_cosmo_amr.get_K_mean(), lapse_mean});
 
             // Use AMR Interpolator and do lineout data extraction
             // set up an interpolator
