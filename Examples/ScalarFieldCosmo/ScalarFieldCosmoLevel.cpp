@@ -141,6 +141,17 @@ void CosmoLevel::postRestart()
         pout() << "Calculated K mean as " << m_cosmo_amr.get_K_mean()
                << " at t = " << m_time << " on restart at level " << m_level
                << endl;
+        
+        AMRReductions<VariableType::evolution> amr_reductions_evolution(
+                m_cosmo_amr);
+
+            double lapse_mean = amr_reductions_evolution.sum(c_lapse) / pow(m_p.L, 3.);
+            double lapse_physvol = amr_reductions_evolution.sum(c_lapse) / phys_vol;
+
+            pout() << " t = " << m_time << ", <lapse> = " << lapse_mean << endl;
+            pout() << " t = " << m_time << ", <lapse> (phys vol) = " << lapse_physvol << endl;
+
+
     if (m_time == 0.0)
     {
         // fillAllGhosts();
@@ -262,6 +273,7 @@ void CosmoLevel::specificEvalRHS(GRLevelData &a_soln, GRLevelData &a_rhs,
 
         my_ccz4_matter(scalar_field, m_p.ccz4_params, m_dx, m_p.sigma,
                        m_p.formulation, m_p.G_Newton);
+    pout() << " t = " << m_time << ", RHS <K> = " << m_cosmo_amr.get_K_mean() << endl;
     my_ccz4_matter.set_K_mean(m_cosmo_amr.get_K_mean());
     BoxLoops::loop(my_ccz4_matter, a_soln, a_rhs, EXCLUDE_GHOST_CELLS);
 }
@@ -340,16 +352,24 @@ void CosmoLevel::specificPostTimeStep()
             m_cosmo_amr.set_S_mean(amr_reductions_diagnostic.sum(c_S_scaled) /
                                    phys_vol);
             m_cosmo_amr.set_K_mean(K_total / phys_vol);
+            // m_cosmo_amr.set_K_mean(-sqrt(3.0 * m_cosmo_amr.get_rho_mean()));
+             
+        // BoxLoops::loop(SetValue(m_cosmo_amr.get_K_mean(), Interval(c_K, c_K)),
+        //                m_state_new, m_state_new, INCLUDE_GHOST_CELLS);
 
-            pout() << " t = " << m_time << ", <K> = " << m_cosmo_amr.get_K_mean() << endl;
+            pout() << " t = " << m_time << ", postTimeStep <K> = " << m_cosmo_amr.get_K_mean() << endl;
             // AMRReductions for evolution variables
             AMRReductions<VariableType::evolution> amr_reductions_evolution(
                 m_cosmo_amr);
 
             double chi_mean = amr_reductions_evolution.sum(c_chi) / pow(m_p.L, 3.);
             double lapse_mean = amr_reductions_evolution.sum(c_lapse) / pow(m_p.L, 3.);
+            // double lapse_physvol = amr_reductions_evolution.sum(c_lapse) / phys_vol;
 
+            pout() << " t = " << m_time << ". L = " << m_p.L << endl;
+            pout() << " t = " << m_time << ", <chi> = " << chi_mean << endl;
             pout() << " t = " << m_time << ", <lapse> = " << lapse_mean << endl;
+            // pout() << " t = " << m_time << ", <lapse_physvol> = " << lapse_physvol << endl;
 
             // Write output file
             SmallDataIO data_out_file(m_p.data_path + "data_out", m_dt, m_time,
