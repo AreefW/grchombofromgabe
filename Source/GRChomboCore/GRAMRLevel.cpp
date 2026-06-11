@@ -1005,7 +1005,8 @@ bool GRAMRLevel::at_level_timestep_multiple(int a_level) const
         target_dt /= m_p.ref_ratios[ilevel];
     }
     // get difference to nearest multiple of target_dt
-    const double time_remainder = remainder(m_time, target_dt);
+    const double time_since_restart = m_time - m_restart_time;
+    const double time_remainder = remainder(time_since_restart, target_dt);
     return (abs(time_remainder) < m_gr_amr.timeEps() * m_p.coarsest_dt);
 }
 

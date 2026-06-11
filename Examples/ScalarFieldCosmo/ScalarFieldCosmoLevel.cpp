@@ -317,13 +317,13 @@ void CosmoLevel::specificPostTimeStep()
     int min_level = 0;
     bool calculate_diagnostics = at_level_timestep_multiple(min_level);
     bool first_step = (m_time == 0.);
-
+    // double time_from_restart = m_time - m_restart_time;
     // No need to evaluate the diagnostics more frequently than every coarse
     // timestep, but must happen on every level (not just level zero or data
     // will not be populated on finer levels)
 
-    // if (calculate_diagnostics)
-    if (min_level == 0)
+    if (calculate_diagnostics)
+    // if (min_level == 0)
     {
         fillAllGhosts();
         Potential potential(m_p.potential_params);
