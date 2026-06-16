@@ -33,6 +33,8 @@
 #include "ScalarField.hpp"
 #include "SetValue.hpp"
 
+#include "FixedGridsTaggingCriterion.hpp"
+
 // For lineout
 #include "ConstraintsExtraction.hpp"
 #include "CustomExtraction.hpp"
@@ -308,9 +310,24 @@ void CosmoLevel::computeTaggingCriterion(
     const FArrayBox &current_state_diagnostics)
 {
     double rho_mean = m_cosmo_amr.get_rho_mean();
-    BoxLoops::loop(CosmoHamTaggingCriterion(m_dx, m_p.tagging_center,
+    std::array<double, CH_SPACEDIM> center_osc = {6.32687, 0.551304, 3.80662};
+    double Lregrid = 2.0; //0.672065477;
+
+    if (m_time <= 88.2348)
+    {
+         BoxLoops::loop(CosmoHamTaggingCriterion(m_dx, m_p.tagging_center,
                                             m_p.tagging_radius, rho_mean),
                    current_state_diagnostics, tagging_criterion);
+    }
+
+    // center of oscillon else {double Lregrid = 32.0;
+    else
+    {
+        BoxLoops::loop(FixedGridsTaggingCriterion(m_dx, m_level, m_p.max_level,
+                                                  Lregrid,
+                                                  center_osc),
+                       current_state, tagging_criterion);
+    }
 }
 void CosmoLevel::specificPostTimeStep()
 {
