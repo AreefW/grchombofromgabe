@@ -311,7 +311,7 @@ void CosmoLevel::computeTaggingCriterion(
 {
     double rho_mean = m_cosmo_amr.get_rho_mean();
     std::array<double, CH_SPACEDIM> center_osc = {6.32687, 0.551304, 3.80662};
-    double Lregrid = 2.0; //0.672065477;
+    double Lregrid = 0.8400818462; //1.; //0.672065477;
 
     if (m_time <= 88.2348)
     {
