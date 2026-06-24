@@ -311,7 +311,7 @@ void CosmoLevel::computeTaggingCriterion(
 {
     double rho_mean = m_cosmo_amr.get_rho_mean();
     std::array<double, CH_SPACEDIM> center_osc = {6.32687, 0.551304, 3.80662};
-    double Lregrid = 0.8400818462; //1.; //0.672065477;
+    double Lregrid = 0.1; //1.; //0.672065477;
 
     if (m_time <= 88.2348)
     {
@@ -426,4 +426,9 @@ void CosmoLevel::specificPostTimeStep()
                                          m_p.data_path + "rho_lineout");
         }
     }
+
+    #ifdef USE_AHFINDER
+    if (m_p.AH_activate && m_level == m_p.AH_params.level_to_run)
+        m_cosmo_amr.m_ah_finder.solve(m_dt, m_time, m_restart_time);
+    #endif
 }
