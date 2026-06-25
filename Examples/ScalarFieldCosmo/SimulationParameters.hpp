@@ -40,6 +40,9 @@ class SimulationParameters : public SimulationParametersBase
         // Tagging params
         pp.load("tagging_center", tagging_center, center);
         pp.load("tagging_radius", tagging_radius, L);
+        pp.load("switch_tagging_time", switch_tagging_time, 0.);
+        pp.load("fixed_grids_radius", fixed_grids_radius, 0.1 * L);
+        pp.load("BH_center", BH_center, center);
 
 #ifdef USE_AHFINDER
         double AH_guess =
@@ -58,9 +61,10 @@ class SimulationParameters : public SimulationParametersBase
     }
 
     // Initial data for matter and potential and BH
-    double G_Newton, tagging_radius;
+    double G_Newton, tagging_radius, switch_tagging_time, fixed_grids_radius;
     int lineout_num_points;
     std::array<double, CH_SPACEDIM> tagging_center;
+    std::array<double, CH_SPACEDIM> BH_center;
     InitialScalarData::params_t initial_params;
     Potential::params_t potential_params;
     KerrBH::params_t kerr_params;

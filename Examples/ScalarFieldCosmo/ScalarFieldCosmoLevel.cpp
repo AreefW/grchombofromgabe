@@ -275,7 +275,7 @@ void CosmoLevel::specificEvalRHS(GRLevelData &a_soln, GRLevelData &a_rhs,
 
         my_ccz4_matter(scalar_field, m_p.ccz4_params, m_dx, m_p.sigma,
                        m_p.formulation, m_p.G_Newton);
-    pout() << " t = " << m_time << ", RHS <K> = " << m_cosmo_amr.get_K_mean() << endl;
+    // pout() << " t = " << m_time << ", RHS <K> = " << m_cosmo_amr.get_K_mean() << endl;
     my_ccz4_matter.set_K_mean(m_cosmo_amr.get_K_mean());
     BoxLoops::loop(my_ccz4_matter, a_soln, a_rhs, EXCLUDE_GHOST_CELLS);
 }
@@ -311,21 +311,18 @@ void CosmoLevel::computeTaggingCriterion(
 {
     double rho_mean = m_cosmo_amr.get_rho_mean();
     std::array<double, CH_SPACEDIM> center_osc = {6.32687, 0.551304, 3.80662};
-    double Lregrid = 0.1; //1.; //0.672065477;
 
-    if (m_time <= 88.2348)
+    if (m_time <= m_p.switch_tagging_time)
     {
          BoxLoops::loop(CosmoHamTaggingCriterion(m_dx, m_p.tagging_center,
                                             m_p.tagging_radius, rho_mean),
                    current_state_diagnostics, tagging_criterion);
     }
-
-    // center of oscillon else {double Lregrid = 32.0;
     else
     {
         BoxLoops::loop(FixedGridsTaggingCriterion(m_dx, m_level, m_p.max_level,
-                                                  Lregrid,
-                                                  center_osc),
+                                                  m_p.fixed_grids_radius,
+                                                  m_p.BH_center),
                        current_state, tagging_criterion);
     }
 }
@@ -374,7 +371,7 @@ void CosmoLevel::specificPostTimeStep()
         // BoxLoops::loop(SetValue(m_cosmo_amr.get_K_mean(), Interval(c_K, c_K)),
         //                m_state_new, m_state_new, INCLUDE_GHOST_CELLS);
 
-            pout() << " t = " << m_time << ", postTimeStep <K> = " << m_cosmo_amr.get_K_mean() << endl;
+            // pout() << " t = " << m_time << ", postTimeStep <K> = " << m_cosmo_amr.get_K_mean() << endl;
             // AMRReductions for evolution variables
             AMRReductions<VariableType::evolution> amr_reductions_evolution(
                 m_cosmo_amr);
@@ -383,9 +380,9 @@ void CosmoLevel::specificPostTimeStep()
             double lapse_mean = amr_reductions_evolution.sum(c_lapse) / pow(m_p.L, 3.);
             // double lapse_physvol = amr_reductions_evolution.sum(c_lapse) / phys_vol;
 
-            pout() << " t = " << m_time << ". L = " << m_p.L << endl;
-            pout() << " t = " << m_time << ", <chi> = " << chi_mean << endl;
-            pout() << " t = " << m_time << ", <lapse> = " << lapse_mean << endl;
+            // pout() << " t = " << m_time << ". L = " << m_p.L << endl;
+            // pout() << " t = " << m_time << ", <chi> = " << chi_mean << endl;
+            // pout() << " t = " << m_time << ", <lapse> = " << lapse_mean << endl;
             // pout() << " t = " << m_time << ", <lapse_physvol> = " << lapse_physvol << endl;
 
             // Write output file
@@ -429,6 +426,9 @@ void CosmoLevel::specificPostTimeStep()
 
     #ifdef USE_AHFINDER
     if (m_p.AH_activate && m_level == m_p.AH_params.level_to_run)
+    {
+        m_cosmo_amr.m_ah_finder.set_origins(std::vector<std::array<double,3>>{m_p.BH_center});
         m_cosmo_amr.m_ah_finder.solve(m_dt, m_time, m_restart_time);
+    }
     #endif
 }
