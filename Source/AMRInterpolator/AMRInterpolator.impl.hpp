@@ -851,15 +851,41 @@ int AMRInterpolator<InterpAlgo>::get_var_parity(int comp,
     return parity;
 }
 
+// template <typename InterpAlgo>
+// double AMRInterpolator<InterpAlgo>::apply_reflective_BC_on_coord(
+//     const InterpolationQuery &query, double dir, int point_idx) const
+// {
+//     double coord = query.m_coords[dir][point_idx];
+//     if (m_lo_boundary_reflective[dir] && coord < 0.)
+//         coord = -coord;
+//     else if (m_hi_boundary_reflective[dir] && coord > m_upper_corner[dir])
+//         coord = 2. * m_upper_corner[dir] - coord;
+//     return coord;
+// }
+
 template <typename InterpAlgo>
 double AMRInterpolator<InterpAlgo>::apply_reflective_BC_on_coord(
     const InterpolationQuery &query, double dir, int point_idx) const
 {
     double coord = query.m_coords[dir][point_idx];
-    if (m_lo_boundary_reflective[dir] && coord < 0.)
+
+    if (m_bc_params.is_periodic[dir])
+    {
+        const double domain_length = m_upper_corner[dir];
+
+        coord = std::fmod(coord, domain_length);
+        if (coord < 0.)
+            coord += domain_length;
+    }
+    else if (m_lo_boundary_reflective[dir] && coord < 0.)
+    {
         coord = -coord;
+    }
     else if (m_hi_boundary_reflective[dir] && coord > m_upper_corner[dir])
+    {
         coord = 2. * m_upper_corner[dir] - coord;
+    }
+
     return coord;
 }
 
