@@ -25,7 +25,8 @@
 #include "AMRReductions.hpp"
 #include "ComputePack.hpp"
 #include "CosmoDiagnostics.hpp"
-#include "CosmoMovingPunctureGauge.hpp"
+// #include "CosmoMovingPunctureGauge.hpp"
+#include "ShockAvoidingGauge.hpp"
 #include "GammaCalculator.hpp"
 #include "InitialK.hpp"
 #include "InitialScalarData.hpp"
@@ -371,7 +372,7 @@ void CosmoLevel::specificPostTimeStep()
         // BoxLoops::loop(SetValue(m_cosmo_amr.get_K_mean(), Interval(c_K, c_K)),
         //                m_state_new, m_state_new, INCLUDE_GHOST_CELLS);
 
-            pout() << " t = " << m_time << ", postTimeStep <K> = " << m_cosmo_amr.get_K_mean() << endl;
+            // pout() << " t = " << m_time << ", postTimeStep <K> = " << m_cosmo_amr.get_K_mean() << endl;
             // AMRReductions for evolution variables
             AMRReductions<VariableType::evolution> amr_reductions_evolution(
                 m_cosmo_amr);

@@ -264,6 +264,18 @@ struct ExpansionFunction : AHFunctionDefault
         }
 #endif
 
+
+        static bool printed_once = false;
+        if (!printed_once)
+        {
+            printed_once = true;
+            pout() << "[AH DEBUG] f = " << f
+                << ", expansion_radius_power = "
+                << a_params.expansion_radius_power
+                << ", pow(f, power) = "
+                << pow(f, a_params.expansion_radius_power)
+                << endl;
+        }
         // using "r * Expansion" significantly improves the convergence
         // (making a Schw. BH converge for any radius >~ 0.5*r_AH instead of
         // only up to ~ 3 * r_AH as it happens just with the expansion)

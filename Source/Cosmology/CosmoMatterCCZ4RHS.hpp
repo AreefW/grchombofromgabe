@@ -10,6 +10,7 @@
 #include "CCZ4RHS.hpp"
 #include "Cell.hpp"
 #include "CosmoMovingPunctureGauge.hpp"
+// #include "ShockAvoidingGauge.hpp"
 #include "FourthOrderDerivatives.hpp"
 #include "Tensor.hpp"
 #include "TensorAlgebra.hpp"
@@ -21,13 +22,15 @@
 //!  evolution, with runtime cosmological gauge K_mean support.
 /*!
      This class mirrors MatterCCZ4RHS but fixes the ScalarFieldCosmo use-case
-   where K_mean must be updated at runtime for CosmoMovingPunctureGauge.
+   where K_mean must be updated at runtime for ShockAvoidingGauge.
 */
 
 template <class matter_t, class deriv_t = FourthOrderDerivatives>
+// class CosmoMatterCCZ4RHS : public CCZ4RHS<ShockAvoidingGauge, deriv_t>
 class CosmoMatterCCZ4RHS : public CCZ4RHS<CosmoMovingPunctureGauge, deriv_t>
 {
   public:
+    // using gauge_t = ShockAvoidingGauge;
     using gauge_t = CosmoMovingPunctureGauge;
     using CCZ4 = CCZ4RHS<gauge_t, deriv_t>;
 
