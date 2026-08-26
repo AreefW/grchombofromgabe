@@ -30,6 +30,18 @@ class TraceARemoval
     {
         auto vars = current_cell.template load_vars<Vars>();
 
+        // Enforce det(h)=1 on conformal metric h_ij
+        const auto det_h = TensorAlgebra::compute_determinant_sym(vars.h);
+        CH_assert(det_h > 0.0);
+
+        const data_t metric_factor =
+        pow(det_h, -1.0 / static_cast<double>(GR_SPACEDIM));
+
+        FOR2(i, j)
+        {
+            vars.h[i][j] *= metric_factor;
+        }
+
         const auto h_UU = TensorAlgebra::compute_inverse_sym(vars.h);
         TensorAlgebra::make_trace_free(vars.A, vars.h, h_UU);
 
